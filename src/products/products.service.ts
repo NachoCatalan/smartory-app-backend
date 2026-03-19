@@ -1,23 +1,62 @@
-import { Injectable } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { BadRequestException, ExceptionFilter, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CreateProductDto, UpdateProductDto, CreateProducerDto } from './dto';
 import { Repository } from 'typeorm';
-import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Producer, ProductImage, Product, ProductCategory } from './entities';
 
 @Injectable()
 export class ProductsService {
 
   constructor(
     @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>
+    private readonly productRepository: Repository<Product>,
+    @InjectRepository(ProductImage)
+    private readonly productImageRepository: Repository<ProductImage>,
+    @InjectRepository(Producer)
+    private readonly producerRepository: Repository<Producer>,
+    @InjectRepository(ProductCategory)
+    private readonly categoryRepository: Repository<ProductCategory>,
   ){}
 
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  async create(createProductDto: CreateProductDto) {
+
+    try {
+      const { images = [], producer, category, ...productProps } = createProductDto;
+      const product = this.productRepository.create({
+        ...productProps,
+        images: images.map( image => this.productImageRepository.create({url: image})), 
+      });
+      if( category ) {
+        product.category = await this.findOrCreateProducerOrCategory(category, 'category') as ProductCategory;
+      }
+      if( producer ) {
+        product.producer = await this.findOrCreateProducerOrCategory(producer, 'producer') as Producer;
+
+      }
+      await this.productRepository.save(product);
+      return product;
+    } catch (error) {
+      this.handleDBError(error);
+    }
   }
 
-  findAll() {
+  async findOrCreateProducerOrCategory( name: string, entityName: string ) {
+    try {
+      const entity = (entityName === 'producer')
+      ? await this.producerRepository.findOneBy({name})
+      : await this.categoryRepository.findOneBy({name});
+      if( !entity ) {
+        const newEntity = this.producerRepository.create({name});
+        await this.producerRepository.save(newEntity);
+        return newEntity;
+      }
+      return entity;
+    } catch (error) {
+      throw new InternalServerErrorException({error});
+    }
+  }
+
+  async findAll() {
     return `This action returns all products`;
   }
 
@@ -32,4 +71,9 @@ export class ProductsService {
   remove(id: number) {
     return `This action removes a #${id} product`;
   }
+
+  private handleDBError( error: any ) {
+    if ( error.code === "23505" ) throw new BadRequestException(error.detail);
+    throw new BadRequestException(error.detail);
+  } 
 }

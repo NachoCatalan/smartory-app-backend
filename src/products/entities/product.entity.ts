@@ -1,4 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ProductImage } from "./product-image.entity";
+import { Producer } from "./producer.entity";
+import { ProductCategory } from "./product-category.entity";
 
 @Entity()
 export class Product {
@@ -12,15 +15,26 @@ export class Product {
     name: string;
     @Column('text')
     description: string;
-    @Column('date')
-    fabDate: Date;
-    @Column('date')
-    expDate: Date;
+    @Column('date',{
+        nullable: true
+    })
+    fabDate?: Date;
+    @Column('date',{
+        nullable: true
+    })
+    expDate?: Date;
     @Column('text', {
         array: true,
         default: []
     })
-    images: string[];
-
+    @OneToMany( () => ProductImage, productImage => productImage.product, {
+        cascade: true,
+        eager: true
+    })
+    images?: ProductImage[];
+    @ManyToOne( () => Producer, producer => producer.product )
+    producer?: Producer;
+    @ManyToOne( () => ProductCategory, category => category.product )
+    category?: ProductCategory;
 
 }
