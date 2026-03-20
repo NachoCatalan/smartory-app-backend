@@ -32,9 +32,15 @@ export class Product {
         eager: true
     })
     images?: ProductImage[];
-    @ManyToOne( () => Producer, producer => producer.product )
+    @ManyToOne( () => Producer, producer => producer.product, {
+        eager: true,
+        cascade: false,
+    })
     producer?: Producer;
-    @ManyToOne( () => ProductCategory, category => category.product )
+    @ManyToOne( () => ProductCategory, category => category.product, {
+        eager: true,
+        cascade: false,
+    })
     category?: ProductCategory;
 
 }
