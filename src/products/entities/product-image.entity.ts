@@ -5,10 +5,7 @@ import { Product } from "./product.entity";
 export class ProductImage {
     @PrimaryGeneratedColumn('uuid')
     id: string;
-    @Column('text', {
-        array: true,
-        default: []
-    })
+    @Column('text')
     url: string;
     @ManyToOne( () => Product, product => product.images, {
         onDelete: 'CASCADE'

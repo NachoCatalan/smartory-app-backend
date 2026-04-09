@@ -1,34 +1,24 @@
-import { IsArray, IsDate, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { IsArray, IsDate, IsOptional, IsString, Max, MaxLength, MinLength } from "class-validator";
 
 export class CreateProductDto {
 
     @IsString()
     @MinLength(1)
+    @MaxLength(100)
     name: string;
+    @IsOptional()
     @IsString()
     @MinLength(1)
     @MaxLength(50)
-    description: string;
-    @IsDate()
+    description?: string;
     @IsOptional()
-    fabDate?: Date;
-    @IsDate()
-    @IsOptional()
-    expDate?: Date;
-    @IsArray({
-        each: true,
-    })
-    @IsString({
-        each: true
-    })
+    @IsArray()
     @IsString({
         each:true
     })
-    @IsOptional()
-    @IsArray()
     images?: string[];
-    @IsString()
     @IsOptional()
+    @IsString()
     @MinLength(1)
     @MaxLength(25)
     producer?: string;

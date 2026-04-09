@@ -14,6 +14,10 @@ import { Producer, Product, ProductCategory, ProductImage } from './entities';
       Producer,
       ProductCategory
     ])
+  ],
+  exports: [
+    TypeOrmModule,
+    ProductsService
   ]
 })
 export class ProductsModule {}

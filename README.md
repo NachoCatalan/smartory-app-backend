@@ -10,10 +10,26 @@
 
 3. Configurar variables de entorno
 
-4. Correr el proyecto con
+4. Poblar la base de datos ejecutando una peticion GET a 'seed'
+  
+      `localhost:3000/api/seed` 
+
+5. Correr el proyecto con
 ```
 yarn start:dev
 ```
+
+## Implementaciones realizadas
+
+ * Catalogo de productos con imagenes, productores, categorias
+ * Sistema de autenticacion con JWT
+
+## Trabajando en
+
+ * Inventario de productos por usuario
+ * Match de instrucciones con productos registrados
+ * Sistema de logs
+ * Y mas... 
 
 ## Stack
 

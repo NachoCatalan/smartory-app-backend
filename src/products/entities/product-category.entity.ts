@@ -10,6 +10,6 @@ export class ProductCategory {
         nullable: false
     })
     name: string;
-    @OneToMany( () => Product, p => p.category )
-    product: Product;
+    @OneToMany( () => Product, p => p.category, {onDelete: 'CASCADE'} )
+    product: Product[];
 }

@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 import { ProductImage } from "./product-image.entity";
 import { Producer } from "./producer.entity";
 import { ProductCategory } from "./product-category.entity";
+import { InventoryProduct } from "src/inventory/entities/inventory-product.entity";
 
 @Entity()
 export class Product {
@@ -9,30 +10,19 @@ export class Product {
     @PrimaryGeneratedColumn('uuid')
     id: string;
     @Column('text', {
-        unique: true,
         nullable: false
     })
     name: string;
-    @Column('text')
-    description: string;
-    @Column('date',{
+    @Column('text',{
         nullable: true
     })
-    fabDate?: Date;
-    @Column('date',{
-        nullable: true
-    })
-    expDate?: Date;
-    @Column('text', {
-        array: true,
-        default: []
-    })
+    description?: string;
     @OneToMany( () => ProductImage, productImage => productImage.product, {
         cascade: true,
         eager: true
     })
     images?: ProductImage[];
-    @ManyToOne( () => Producer, producer => producer.product, {
+    @ManyToOne( () => Producer, producer => producer.products, {
         eager: true,
         cascade: false,
     })
@@ -42,5 +32,7 @@ export class Product {
         cascade: false,
     })
     category?: ProductCategory;
+    @OneToMany( () => InventoryProduct, inv => inv.product )
+    inventory?: InventoryProduct[];
 
 }
