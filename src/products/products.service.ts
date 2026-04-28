@@ -1,5 +1,5 @@
-import { BadRequestException, ExceptionFilter, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { CreateProductDto, UpdateProductDto, CreateProducerDto } from './dto';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CreateProductDto, UpdateProductDto } from './dto';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producer, ProductImage, Product, ProductCategory } from './entities';

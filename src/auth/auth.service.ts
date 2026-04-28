@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { DataSource } from 'typeorm';
+import { Inventory } from 'src/inventory/entities/inventory.entity';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +16,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private dataSource: DataSource,
   ) {}
   
   async login(loginUserDto: LoginUserDto) {
@@ -30,20 +33,31 @@ export class AuthService {
     }
   }
   async register(registerUserDto: RegisterUserDto) {
+    const { password, ...rest } = registerUserDto;
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      const { password, ...rest } = registerUserDto;
-      const user = this.userRepository.create({
+      const user = queryRunner.manager.create(User, {
         ...rest,
         password: await bcrypt.hash(password, 10),
       });
-      const dbUser = await this.userRepository.save(user);
+      const dbUser = await queryRunner.manager.save(user);
+      // Creacion del inventario
+      const newInventory = queryRunner.manager.create(Inventory, {user: dbUser});
+      await queryRunner.manager.save(newInventory);
+      await queryRunner.commitTransaction();
       return {
         accessToken: this.getToken({id: dbUser.id}),
       }
-    } catch (error) {
-      if ( error.code === '23505') 
-        throw new BadRequestException(error.detail);
-      throw new InternalServerErrorException({error});
+    } catch (e: any) {
+      await queryRunner.rollbackTransaction();
+      if ( e.code === '23505') 
+        throw new BadRequestException(e.detail);
+      throw new InternalServerErrorException({e});
+    } finally {
+      await queryRunner.release();
     }
   }
   
@@ -60,7 +74,7 @@ export class AuthService {
         accessToken: this.getToken({id}),
         refreshToken
       }
-    } catch (error) {
+    } catch (error: any) {
       throw new BadRequestException(error.message);
     }
   }
@@ -69,9 +83,14 @@ export class AuthService {
     const users = await this.userRepository.find();
     if ( users.length === 0 ) throw new NotFoundException('Not users found in DB');
     return users.map( user => {
-      const { password, refreshToken, ...rest } = user;
+      const { refreshToken, ...rest } = user;
       return { ...rest }
     });
+  }
+  async getUserById(id: string) {
+    const user = await this.userRepository.findOne({where: {id}});
+    if ( !user ) throw new BadRequestException(`Usuario con id ${id} no encontrado`);
+    return user;
   }
   
 

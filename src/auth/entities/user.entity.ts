@@ -1,6 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Role } from "../enums/user-role.enum";
-import { InventoryProduct } from "src/inventory/entities/inventory-product.entity";
+import { Inventory } from "src/inventory/entities/inventory.entity";
 
 @Entity()
 export class User {
@@ -17,7 +17,7 @@ export class User {
     })
     fullName: string;
     @Column('text',{
-        nullable: false
+        nullable: false,
     })
     password: string;
     @Column('text',{
@@ -26,12 +26,12 @@ export class User {
         select: false
     })
     roles: Role[];
-
     @Column('text', {
         nullable: true
     })
     refreshToken: string;
-
-    @OneToMany( () => InventoryProduct, inv => inv.user )
-    inventory: InventoryProduct[];
+    @OneToOne( () => Inventory, inventory => inventory.user, {
+        eager: true,
+    })
+    inventory: Inventory;
 }

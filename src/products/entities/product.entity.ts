@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 import { ProductImage } from "./product-image.entity";
 import { Producer } from "./producer.entity";
 import { ProductCategory } from "./product-category.entity";
-import { InventoryProduct } from "src/inventory/entities/inventory-product.entity";
+import { InventoryItem } from "src/inventory/entities/inventory-item.entity";
 
 @Entity()
 export class Product {
@@ -32,7 +32,7 @@ export class Product {
         cascade: false,
     })
     category?: ProductCategory;
-    @OneToMany( () => InventoryProduct, inv => inv.product )
-    inventory?: InventoryProduct[];
+    @OneToMany( () => InventoryItem, inv => inv.product )
+    inventory?: InventoryItem[];
 
 }
