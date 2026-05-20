@@ -33,14 +33,14 @@ export class AuthService {
     }
   }
   async register(registerUserDto: RegisterUserDto) {
-    const { password, ...rest } = registerUserDto;
+    const { password, email } = registerUserDto;
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
       const user = queryRunner.manager.create(User, {
-        ...rest,
+        email,
         password: await bcrypt.hash(password, 10),
       });
       const dbUser = await queryRunner.manager.save(user);
@@ -49,7 +49,7 @@ export class AuthService {
       await queryRunner.manager.save(newInventory);
       await queryRunner.commitTransaction();
       return {
-        accessToken: this.getToken({id: dbUser.id}),
+        token: this.getToken({id: dbUser.id}),
       }
     } catch (e: any) {
       await queryRunner.rollbackTransaction();
@@ -71,7 +71,7 @@ export class AuthService {
       user.refreshToken = await bcrypt.hash(refreshToken, 10);
       await this.userRepository.save(user);
       return {
-        accessToken: this.getToken({id}),
+        token: this.getToken({id}),
         refreshToken
       }
     } catch (error: any) {
@@ -95,7 +95,7 @@ export class AuthService {
   
 
   getToken( payload: JwtPayload ) {
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign(payload, {expiresIn: '1h'});
   }
   getRefreshToken( payload: JwtPayload) {
     const { id } = payload;

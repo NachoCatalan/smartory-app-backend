@@ -8,12 +8,6 @@ export class LoginUserDto {
     @MaxLength(30)
     email: string;
     @IsString()
-    @IsStrongPassword({
-        minLength: 7,
-        minNumbers: 1,
-        minUppercase: 1,
-        minSymbols: 1
-    })
     password: string;
 
 }

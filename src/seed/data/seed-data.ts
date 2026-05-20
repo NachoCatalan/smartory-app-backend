@@ -1,4 +1,4 @@
-import { Product } from "src/products/entities";
+import { AmountUnit } from "src/inventory/enums";
 
 export const categories = [
   { name: 'Bebidas' },
@@ -23,12 +23,14 @@ export const producers = [
   { name: 'Belmont'}
 ];
 
-export const products= [
+export const products = [
   {
     name: 'Arroz Grado 2 1kg',
     description: 'Arroz blanco tradicional',
     category: 'Cereales',
     producer: 'Carozzi',
+    amount: 1,
+    amountUnit: AmountUnit.KG,
     images: [
       'https://i5.walmartimages.cl/asr/80aa553a-9e97-4cad-bc03-5e7456947298.ae4524a0b97e2a032e23b403ea41d3fd.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF'
     ]
@@ -38,6 +40,8 @@ export const products= [
     description: 'Bebida gaseosa',
     category: 'Bebidas',
     producer: 'Coca-Cola',
+    amount: 1.5,
+    amountUnit: AmountUnit.LT,
     images: [
       'https://micocacola.vtexassets.com/arquivos/ids/195214/7801610001622_2.png?v=638865613788970000'
     ]
@@ -47,6 +51,8 @@ export const products= [
     description: 'Leche larga vida',
     category: 'Lácteos',
     producer: 'Colún',
+    amount: 1,
+    amountUnit: AmountUnit.LT,
     images: [
       'https://www.colun.cl/admin/archivos/imagenes/productos/hGXYJoktisoXNbYGZGJp.png'
     ]
@@ -56,6 +62,8 @@ export const products= [
     description: 'Carne fresca',
     category: 'Carnes',
     producer: 'Agrosuper',
+    amount: 700,
+    amountUnit: AmountUnit.GR,
     images: [
       'https://agrosuperventas.com/medias/1012017-1-300Wx300H?context=bWFzdGVyfGltYWdlc3wzODQ2Njd8aW1hZ2UvanBlZ3xhR1U0TDJnd055ODRPREUwTWprNE56VTVNVGs0THpFd01USXdNVGRmTVY4ek1EQlhlRE13TUVnfDcxZTkzMTY4YTQ0ZDg1N2FkMzdiMDJiOTg2NGI5YWJlNDcyMThhNGVmYjBmN2YzYWZlMDQ5NmRmNDkzYTU0MjU'
     ]
@@ -65,6 +73,8 @@ export const products= [
     description: 'Fruta fresca',
     category: 'Frutas',
     producer: 'Nestlé',
+    amount: 1,
+    amountUnit: AmountUnit.UN,
     images: [
       'https://www.shutterstock.com/image-photo/fresh-red-apple-water-droplets-600nw-2717791503.jpg'
     ]
@@ -74,6 +84,8 @@ export const products= [
     description: 'Pan suave',
     category: 'Panadería',
     producer: 'Ideal',
+    amount: 750,
+    amountUnit: AmountUnit.GR,
     images: [
       'https://media.falabella.com/tottusCL/20114600_1/w=1500,h=1500,fit=cover'
     ]
@@ -83,8 +95,10 @@ export const products= [
     description: 'Aceite para cocinar',
     category: 'Despensa',
     producer: 'Belmont',
+    amount: 1,
+    amountUnit: AmountUnit.LT,
     images: [
-      'hthttps://jcpuntofertas.cl/wp-content/uploads/2023/07/Aceite-vegeta-Belmont-1-L.jpg'
+      'https://jcpuntofertas.cl/wp-content/uploads/2023/07/Aceite-vegeta-Belmont-1-L.jpg'
     ]
   },
   {
@@ -92,15 +106,19 @@ export const products= [
     description: 'Pasta de trigo',
     category: 'Pastas',
     producer: 'Lucchetti',
+    amount: 500,
+    amountUnit: AmountUnit.GR,
     images: [
       'https://i5.walmartimages.cl/asr/a0afe1e9-2bf2-4dd4-9ede-6cdaa8fff339.51f4e5e79d47ad6b577440c19aedcd01.jpeg'
     ]
   },
   {
-    name: 'Yogurt Natural',
+    name: 'Yogurt Natural 150gr',
     description: 'Yogurt sin azúcar',
     category: 'Lácteos',
     producer: 'Soprole',
+    amount: 150,
+    amountUnit: AmountUnit.GR,
     images: [
       'https://alvicl.vtexassets.com/arquivos/ids/166117/000000000000052483-UN.jpg?v=638960601640800000'
     ]
@@ -110,6 +128,8 @@ export const products= [
     description: 'Huevos frescos',
     category: 'Lácteos',
     producer: 'Colún',
+    amount: 12,
+    amountUnit: AmountUnit.UN,
     images: [
       'https://santaisabel.vtexassets.com/arquivos/ids/527825/Huevos-Cuisine---Co-Grandes-Color-12-un.jpg?v=638908740205000000'
     ]

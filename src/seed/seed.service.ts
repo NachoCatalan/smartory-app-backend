@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ProductsService } from '../products/products.service';
 import { Producer, Product, ProductCategory, ProductImage } from 'src/products/entities';
 import { categories, producers, products } from './data/seed-data';
+import { CreateProductDto } from 'src/products/dto';
 
 @Injectable()
 export class SeedService {
@@ -17,7 +18,6 @@ export class SeedService {
     private readonly producerRepository: Repository<Producer>,
     @InjectRepository(ProductCategory)
     private readonly categoryRepository: Repository<ProductCategory>,
-    @InjectRepository(ProductImage)
     private readonly productService: ProductsService,
   ){
   }

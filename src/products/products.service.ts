@@ -1,12 +1,14 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producer, ProductImage, Product, ProductCategory } from './entities';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class ProductsService {
+  
 
   constructor(
     @InjectRepository(Product)
@@ -21,12 +23,13 @@ export class ProductsService {
   ){}
 
   async create(createProductDto: CreateProductDto) {
-
     try {
       const { images = [], producer, category, ...productProps } = createProductDto;
       const product = this.productRepository.create({
         ...productProps,
-        images: images.map( image => this.productImageRepository.create({url: image})), 
+        images: images.map( image => {
+          return this.productImageRepository.create({url: image});
+        }), 
       });
       if( category ) {
         product.category = await this.findOrCreateCategory(category);
@@ -40,6 +43,47 @@ export class ProductsService {
     } catch (error) {
       this.handleDBError(error);
     }
+  }
+
+  async findBy(term: string): Promise<Product | Product[]> {
+    if (isUUID(term)) {
+      const product = await this.productRepository.findOne({where: {id: term}})
+      if ( !product ) throw new BadRequestException(`Producto con id: ${term} no encontrado`);
+      return product;
+    } else {
+      const products = await this.productRepository
+        .createQueryBuilder('product')
+        .leftJoinAndSelect('product.producer', 'producer')
+        .leftJoinAndSelect('product.category', 'category')
+        .leftJoinAndSelect('product.images', 'images')
+        .where('LOWER(product.name) LIKE :term', {
+          term: `%${term.toLowerCase()}%`,
+        })
+        .getMany();
+        console.log({products});
+      return products;
+    }
+  }
+
+  async matchByName(name: string): Promise<Product[]> {
+    const products = await this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.producer', 'producer')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.images', 'images')
+      .where('LOWER(product.name) LIKE :name', {
+        name: `%${name.toLowerCase()}%`,
+      })
+      .getMany();
+    return products;
+  }
+  async findByName(name: string) {
+    return this.productRepository
+      .createQueryBuilder('product')
+      .where('LOWER(product.name) LIKE LOWER(:name)', {
+        name: `%${name}%`,
+      })
+      .getOne();
   }
 
   async findOrCreateProducer( name: string ) {
@@ -78,17 +122,11 @@ export class ProductsService {
     });
   }
 
-  async findOne(id: string) {
-    const product = await this.productRepository.findOne({where: {id}})
-    if ( !product ) throw new BadRequestException(`Product with id ${id} not found`);
-    return product;
-  }
-
   async update(id: string, updateProductDto: UpdateProductDto) {
-    if ( Object.keys(updateProductDto).length === 0 ) throw new BadRequestException(`No entries provided`);
+    if ( Object.keys(updateProductDto).length === 0 ) throw new BadRequestException(`Ninguna entrada provista`);
     const { images, producer, category, ...rest} = updateProductDto;
     const productToUpdate = await this.productRepository.preload({id,...rest});
-    if( !productToUpdate ) throw new BadRequestException(`Product with id ${id} - Not found`);
+    if( !productToUpdate ) throw new BadRequestException(`Producto con id: ${id} no encontrado`);
 
     const query = this.dataSource.createQueryRunner();
     await query.connect();

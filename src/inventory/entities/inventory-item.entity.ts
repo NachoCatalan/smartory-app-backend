@@ -1,5 +1,5 @@
 import { Product } from "src/products/entities";
-import { ProductStatus, Unit } from "../enums";
+import { AmountUnit, ProductStatus } from "../enums";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Inventory } from "./inventory.entity";
 
@@ -9,31 +9,35 @@ export class InventoryItem {
 
     @PrimaryGeneratedColumn('increment')
     id: number;
-
     @ManyToOne( () => Inventory, inventory => inventory.items, {
         onDelete: 'CASCADE'
     })
     inventory: Inventory;
     @ManyToOne( () => Product, product => product.inventory, {
-        eager: true
+        eager: true,
+
     } ) 
     product: Product;
     @Column('float', {
         nullable: false
     })
     quantity: number;
-    // @Column('text', {
-    //     nullable: false
-    // })
-    // unit: Unit;
-    // @Column('float', {
-    //     nullable: true
-    // })
-    // initialQuantity: number;
+    @Column('text', {
+        default: AmountUnit.UN,
+    })
+    amountUnit: AmountUnit;
+    @Column('float', {
+        nullable: false
+    })
+    totalAmount: number;
+    @Column('float', {
+        nullable: false
+    })
+    remainingAmount: number;
     @CreateDateColumn()
     createdAt: Date;
     @Column({
-        nullable: true
+        nullable: true,
     })
     expirationDate?: Date;
     @Column({
@@ -42,5 +46,9 @@ export class InventoryItem {
         default: ProductStatus.AVAILABLE
     })
     status: ProductStatus;
+    @Column('boolean',{
+        default: false
+    })
+    isFavorite: boolean;
 
 }

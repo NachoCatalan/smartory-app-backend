@@ -1,4 +1,6 @@
-import { IsArray, IsDate, IsOptional, IsString, Max, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { AmountUnit } from "src/inventory/enums";
 
 export class CreateProductDto {
 
@@ -27,5 +29,14 @@ export class CreateProductDto {
     @MinLength(1)
     @MaxLength(50)
     category?: string;
-
+    @IsOptional()
+    @IsEnum(AmountUnit)
+    amountUnit?: AmountUnit;
+    @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
+    amount?: number;
+    @IsOptional()
+    @IsString()
+    barcode?: string;
 }

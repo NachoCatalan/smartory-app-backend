@@ -13,7 +13,4 @@ export class RegisterUserDto {
         minSymbols: 1
     })
     password: string;
-    @IsString()
-    @MinLength(3)
-    fullName: string;
 }

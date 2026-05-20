@@ -6,6 +6,7 @@ import { InventoryItem } from './entities/inventory-item.entity';
 import { Inventory } from './entities/inventory.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { ProductsModule } from 'src/products/products.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   controllers: [InventoryController],
@@ -16,7 +17,8 @@ import { ProductsModule } from 'src/products/products.module';
       Inventory
     ]),
     forwardRef(() => AuthModule),
-    ProductsModule
+    ProductsModule,
+    HttpModule,
   ],
   exports: [
     TypeOrmModule

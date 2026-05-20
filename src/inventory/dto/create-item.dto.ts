@@ -1,17 +1,30 @@
-import { IsDate, IsNumber, IsNumberString, IsOptional, IsPositive, IsString, IsUUID, MaxLength, MinLength } from "class-validator";
-import { ProductStatus } from "../enums";
+import { IsDate, IsEnum, IsInt, IsNumber,  IsOptional, IsPositive, IsString, IsUUID } from "class-validator";
+import { AmountUnit } from "../enums";
+import { Type } from "class-transformer";
 
 
 export class CreateItemDto {
 
-    @IsString()
     @IsUUID()
     productId: string;
-    @IsNumber()
+    @IsInt( )
     @IsPositive()
     quantity: number;
-    @IsDate()
     @IsOptional()
+    @Type( () => Number)
+    @IsNumber()
+    @IsPositive()
+    totalAmount?: number;
+    @IsOptional()
+    @Type( () => Number)
+    @IsNumber()
+    @IsPositive()
+    remainingAmount?: number;
+    @IsOptional()
+    @IsEnum(AmountUnit)
+    amountUnit?: AmountUnit
+    @IsOptional()
+    @Type( () => Date)
+    @IsDate()
     expirationDate?: Date;
-    
 }

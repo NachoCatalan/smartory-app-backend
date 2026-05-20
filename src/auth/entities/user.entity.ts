@@ -13,7 +13,7 @@ export class User {
     })
     email: string;
     @Column('text',{
-        nullable: false,
+        nullable: true,
     })
     fullName: string;
     @Column('text',{
