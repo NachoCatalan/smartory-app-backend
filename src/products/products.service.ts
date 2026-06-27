@@ -4,7 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producer, ProductImage, Product, ProductCategory } from './entities';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { isUUID } from 'class-validator';
+import { isUUID, IsInstance } from 'class-validator';
 
 @Injectable()
 export class ProductsService {
@@ -49,6 +49,10 @@ export class ProductsService {
     if (isUUID(term)) {
       const product = await this.productRepository.findOne({where: {id: term}})
       if ( !product ) throw new BadRequestException(`Producto con id: ${term} no encontrado`);
+      return product;
+    } else if (typeof +term === 'number') {
+      const product = await this.productRepository.findBy({barcode : term});
+      console.log({product});
       return product;
     } else {
       const products = await this.productRepository
